@@ -8,9 +8,9 @@ export default function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   
-  const login = useAuthStore(state => state.login);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -28,8 +28,10 @@ export default function Register() {
       const data = await response.json();
 
       if (response.ok) {
-        login({ id: data.id, name: data.name, email: data.email }, data.token);
-        navigate('/');
+        setIsSuccess(true);
+        setName('');
+        setEmail('');
+        setPassword('');
       } else {
         setError(data.message || 'Error al registrar usuario');
       }
@@ -52,9 +54,28 @@ export default function Register() {
             <div className="w-16 h-16 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-blue-500/10">
               <Bike className="w-8 h-8 text-blue-400" />
             </div>
-            <h1 className="text-3xl font-bold text-white mb-2 tracking-tight">Crea tu cuenta</h1>
-            <p className="text-gray-400">Únete a AdventureWorks hoy</p>
+            <h1 className="text-3xl font-bold text-white mb-2 tracking-tight">
+              {isSuccess ? '¡Registro Exitoso!' : 'Crea tu cuenta'}
+            </h1>
+            <p className="text-gray-400">
+              {isSuccess ? 'Ya puedes iniciar sesión en tu cuenta' : 'Únete a AdventureWorks hoy'}
+            </p>
           </div>
+
+          {isSuccess ? (
+            <div className="space-y-6 text-center animate-in fade-in zoom-in duration-500">
+              <div className="p-4 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 text-sm">
+                Tu cuenta ha sido creada correctamente.
+              </div>
+              <button 
+                onClick={() => navigate('/login')}
+                className="w-full py-3.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-medium transition-all duration-300 shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 group"
+              >
+                Ir a Iniciar Sesión
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+          ) : (
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
@@ -129,13 +150,16 @@ export default function Register() {
               )}
             </button>
           </form>
+          )}
 
-          <p className="mt-8 text-center text-sm text-gray-400">
-            ¿Ya tienes una cuenta?{' '}
-            <Link to="/login" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
-              Inicia sesión
-            </Link>
-          </p>
+          {!isSuccess && (
+            <p className="mt-8 text-center text-sm text-gray-400">
+              ¿Ya tienes una cuenta?{' '}
+              <Link to="/login" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
+                Inicia sesión
+              </Link>
+            </p>
+          )}
         </div>
       </div>
     </div>

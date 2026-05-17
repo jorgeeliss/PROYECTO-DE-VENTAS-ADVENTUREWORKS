@@ -33,28 +33,16 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
-          <Route path="/" element={<MainLayout />}>
+          <Route path="/" element={
+            <ProtectedRoute>
+              <MainLayout />
+            </ProtectedRoute>
+          }>
             {/* Rutas Protegidas */}
-            <Route index element={
-              <ProtectedRoute>
-                <Catalog />
-              </ProtectedRoute>
-            } />
-            <Route path="product/:id" element={
-              <ProtectedRoute>
-                <ProductDetail />
-              </ProtectedRoute>
-            } />
-            <Route path="checkout" element={
-              <ProtectedRoute>
-                <Checkout />
-              </ProtectedRoute>
-            } />
-            <Route path="admin/orders" element={
-              <ProtectedRoute>
-                <AdminOrders />
-              </ProtectedRoute>
-            } />
+            <Route index element={<Catalog />} />
+            <Route path="product/:id" element={<ProductDetail />} />
+            <Route path="checkout" element={<Checkout />} />
+            <Route path="admin/orders" element={<AdminOrders />} />
           </Route>
         </Routes>
       </BrowserRouter>

@@ -82,7 +82,7 @@ async function seedDatabase() {
 }
 
 // Inicializar la base de datos y arrancar el servidor
-sequelize.sync({ alter: true }).then(async () => {
+sequelize.sync().then(async () => {
   console.log('Base de datos conectada y sincronizada.');
   await seedDatabase();
   app.listen(PORT, () => {

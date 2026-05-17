@@ -1,13 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Heart, ShoppingCart, Bike, Package } from 'lucide-react';
+import { Search, Heart, ShoppingCart, Bike, Package, LogOut, User } from 'lucide-react';
 import { useCartStore } from '../../store/useCartStore';
 import { useFavoritesStore } from '../../store/useFavoritesStore';
+import { useAuthStore } from '../../store/useAuthStore';
 
 export default function Navbar() {
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const toggleCart = useCartStore(state => state.toggleCart);
   const cartCount = useCartStore(state => state.getCartCount());
   const { toggleFavorites, getFavoritesCount } = useFavoritesStore();
+  const logout = useAuthStore(state => state.logout);
+  const user = useAuthStore(state => state.user);
   const navigate = useNavigate();
 
   return (
@@ -56,6 +60,45 @@ export default function Navbar() {
           >
             <Package className="h-5 w-5" />
           </Link>
+          <div className="relative">
+            <button 
+              onClick={() => setIsProfileOpen(!isProfileOpen)}
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-gray-300 hover:bg-white/5 hover:text-white transition-colors"
+              title="Mi Cuenta"
+            >
+              <User className="h-5 w-5" />
+            </button>
+
+            {isProfileOpen && (
+              <>
+                <div 
+                  className="fixed inset-0 z-40" 
+                  onClick={() => setIsProfileOpen(false)}
+                />
+                <div className="absolute right-0 mt-2 w-48 rounded-xl border border-white/10 bg-[#1c1c1e] shadow-xl overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
+                  {user && (
+                    <div className="px-4 py-3 border-b border-white/10">
+                      <p className="text-sm font-medium text-white truncate">{user.name}</p>
+                      <p className="text-xs text-gray-400 truncate">{user.email}</p>
+                    </div>
+                  )}
+                  <div className="p-1">
+                    <button 
+                      onClick={() => {
+                        setIsProfileOpen(false);
+                        logout();
+                        navigate('/login');
+                      }}
+                      className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 rounded-lg transition-colors text-left"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Cerrar Sesión
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
           <button 
             onClick={toggleCart}
             className="relative flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-gray-300 hover:bg-white/5 hover:text-white transition-colors"
